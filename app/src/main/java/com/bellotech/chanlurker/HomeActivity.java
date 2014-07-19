@@ -16,6 +16,7 @@ import com.bellotech.chanlurker.adapters.BoardListAdapter;
 import com.bellotech.chanlurker.data.Board;
 import com.bellotech.chanlurker.parsers.BoardListLoader;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -98,5 +99,21 @@ public class HomeActivity extends Activity {
         protected void onProgressUpdate(String... text) {
 
         }
+    }
+
+    protected void onDestroy(){
+        try {
+            File cacheDir = getFilesDir();
+            if (cacheDir != null) {
+                String fList[] = cacheDir.list();
+                for (String filePath : fList) {
+                    File file = new File(cacheDir, filePath);
+                    file.delete();
+                }
+            }
+        }catch (Exception e){
+
+        }
+        super.onDestroy();
     }
 }
