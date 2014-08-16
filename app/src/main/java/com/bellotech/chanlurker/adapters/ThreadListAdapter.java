@@ -20,6 +20,8 @@ import com.bellotech.chanlurker.data.Post;
 import com.bellotech.chanlurker.data.Thread;
 import com.bellotech.chanlurker.enums.ImageDimensions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,13 +30,11 @@ import java.util.List;
 public class ThreadListAdapter extends ArrayAdapter<Thread> {
     private Context context;
     private String board;
-    private List<String> tempImgFilePaths;
 
-    public ThreadListAdapter(Context context, int textViewResourceId, List<Thread> items, String board, List<String> tempImgFilePaths) {
+    public ThreadListAdapter(Context context, int textViewResourceId, List<Thread> items, String board) {
         super(context, textViewResourceId, items);
         this.context = context;
         this.board = board;
-        this.tempImgFilePaths = tempImgFilePaths;
     }
 
     @Override
@@ -57,7 +57,10 @@ public class ThreadListAdapter extends ArrayAdapter<Thread> {
                     }
                     TextView threadDate = (TextView) view.findViewById(R.id.threadSelectionDate);
                     if (threadDate != null) {
-                        threadDate.setText(p.getDate());
+                        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy H:mm aaa");
+                        Date d = new Date(p.getDate());
+                        String formattedDate = sdf.format(d);
+                        threadDate.setText(formattedDate);
                     }
                     TextView threadComment = (TextView) view.findViewById(R.id.threadSelectionComment);
                     if (threadComment != null) {
@@ -73,8 +76,7 @@ public class ThreadListAdapter extends ArrayAdapter<Thread> {
                         String tempFileName = p.getTim() + ".jpg";
                         ImageDimensions dim = ImageDimensions.ThreadThumbNail;
 
-                        new DownloadThumbNailTask(postThumbNail, tempFileName, tempImgFilePaths,
-                                parent.getContext(), !tempImgFilePaths.contains(tempFileName), dim).execute(imgURL);
+                        new DownloadThumbNailTask(postThumbNail, tempFileName, parent.getContext(), dim).execute(imgURL);
                     } else {
                         postThumbNail.setVisibility(View.GONE);
                         postThumbNail.setOnClickListener(null);
@@ -106,8 +108,7 @@ public class ThreadListAdapter extends ArrayAdapter<Thread> {
                         String tempFileName = p.getTim() + ".jpg";
                         ImageDimensions dim = ImageDimensions.ThreadScaled;
 
-                        new DownloadThumbNailTask(postThumbNail, tempFileName, tempImgFilePaths,
-                                parent.getContext(), !tempImgFilePaths.contains(tempFileName), dim).execute(imgURL);
+                        new DownloadThumbNailTask(postThumbNail, tempFileName, parent.getContext(), dim).execute(imgURL);
                     }else{
                         postThumbNail.setVisibility(View.GONE);
                     }
