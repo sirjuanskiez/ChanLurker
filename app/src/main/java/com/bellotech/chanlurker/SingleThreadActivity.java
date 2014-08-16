@@ -13,7 +13,6 @@ import com.bellotech.chanlurker.adapters.PostListAdapter;
 import com.bellotech.chanlurker.data.Post;
 import com.bellotech.chanlurker.parsers.PostListLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SingleThreadActivity extends Activity {
@@ -21,7 +20,6 @@ public class SingleThreadActivity extends Activity {
     private String board;
     private String threadNo;
     private String scrollToPostNo;
-    private List<String> tempFilePaths;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +28,6 @@ public class SingleThreadActivity extends Activity {
         board = i.getStringExtra(HomeActivity.BOARD_TO_LOAD);
         threadNo = i.getStringExtra(ThreadsActivity.THREAD_TO_LOAD);
         scrollToPostNo = i.getStringExtra(ThreadsActivity.COMMENT_TO_SCROLL_TO);
-        tempFilePaths = new ArrayList<String>();
         initPostList();
     }
 
@@ -53,18 +50,6 @@ public class SingleThreadActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy(){
-        for(String tempFile : tempFilePaths) {
-            try {
-                deleteFile(tempFile);
-            }catch (Exception e){
-
-            }
-        }
-        super.onDestroy();
     }
 
     private void initPostList(){
@@ -93,7 +78,7 @@ public class SingleThreadActivity extends Activity {
         @Override
         protected void onPostExecute(List<Post> result) {
             if(result != null) {
-                postList.setAdapter(new PostListAdapter(getApplicationContext(), R.layout.posts_selection_layout, result, board, tempFilePaths));
+                postList.setAdapter(new PostListAdapter(getApplicationContext(), R.layout.posts_selection_layout, result, board));
                 postList.setScrollingCacheEnabled(true);
                 if(scrollToPostNo != null && !scrollToPostNo.isEmpty()){
                     for(Post p : result){
