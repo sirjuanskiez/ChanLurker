@@ -16,7 +16,6 @@ import com.bellotech.chanlurker.adapters.ThreadListAdapter;
 import com.bellotech.chanlurker.data.Thread;
 import com.bellotech.chanlurker.parsers.ThreadListLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ThreadsActivity extends Activity {
@@ -24,7 +23,6 @@ public class ThreadsActivity extends Activity {
     public static final String COMMENT_TO_SCROLL_TO = "com.bellotech.chanlurker.COMMENT_TO_SCROLL_TO";
     private ListView threadList;
     private String board;
-    private List<String> tempFilePaths;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,20 +33,7 @@ public class ThreadsActivity extends Activity {
         if(!board.isEmpty()) {
             board = board.replace("/", "");
         }
-        tempFilePaths = new ArrayList<String>();
         initThreadList();
-    }
-
-    @Override
-    protected void onDestroy(){
-        for(String tempFile : tempFilePaths) {
-            try {
-                deleteFile(tempFile);
-            }catch (Exception e){
-
-            }
-        }
-        super.onDestroy();
     }
 
     @Override
@@ -107,7 +92,7 @@ public class ThreadsActivity extends Activity {
         @Override
         protected void onPostExecute(List<Thread> result) {
             if(result != null) {
-                threadList.setAdapter(new ThreadListAdapter(getApplicationContext(), R.layout.threads_selection_layout, result, board, tempFilePaths));
+                threadList.setAdapter(new ThreadListAdapter(getApplicationContext(), R.layout.threads_selection_layout, result, board));
                 threadList.setScrollingCacheEnabled(true);
             }else
                 Toast.makeText(getApplicationContext(), "Failed to load list of threads", Toast.LENGTH_SHORT).show();
