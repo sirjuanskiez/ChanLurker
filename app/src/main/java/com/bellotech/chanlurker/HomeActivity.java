@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bellotech.chanlurker.adapters.BoardListAdapter;
+import com.bellotech.chanlurker.cache.ImageFilePathsCache;
 import com.bellotech.chanlurker.data.Board;
 import com.bellotech.chanlurker.parsers.BoardListLoader;
 
@@ -23,6 +25,7 @@ import java.util.List;
 public class HomeActivity extends Activity {
     public static final String BOARD_TO_LOAD = "com.bellotech.chanlurker.BOARD_TO_LOAD";
     public static final String BOARD_TITLE= "com.bellotech.chanlurker.BOARD_TITLE";
+    public static final String TAG = "HomeActivity";
     private ListView boardList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +77,9 @@ public class HomeActivity extends Activity {
     }
 
     private class BoardListLoaderTask extends AsyncTask<String,String,List<Board>> {
-
-        private List<Board> boards;
-
         @Override
         protected List<Board> doInBackground(String... params) {
-            boards = BoardListLoader.LoadBoardList();
-            return boards;
+            return BoardListLoader.LoadBoardList();
         }
 
         @Override
@@ -111,8 +110,9 @@ public class HomeActivity extends Activity {
                     file.delete();
                 }
             }
+            ImageFilePathsCache.purgeCache();
         }catch (Exception e){
-
+            Log.v(TAG, "Failed to clear image cache", e);
         }
         super.onDestroy();
     }
