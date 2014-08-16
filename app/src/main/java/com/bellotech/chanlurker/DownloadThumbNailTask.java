@@ -8,39 +8,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bellotech.chanlurker.cache.ImageFilePathsCache;
 import com.bellotech.chanlurker.enums.ImageDimensions;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.List;
 
 public class DownloadThumbNailTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
     String url;
     String tempFileName;
     Context context;
-    List<String> tempFilePathCache;
-    boolean isDownload;
     ImageDimensions dim;
 
-    public DownloadThumbNailTask(ImageView bmImage, String tempFileName, List<String> tempFilePathCache, Context context, boolean isDownload, ImageDimensions dim) {
+    public DownloadThumbNailTask(ImageView bmImage, String tempFileName, Context context, ImageDimensions dim) {
         this.bmImage = bmImage;
         this.tempFileName = tempFileName;
-        this.tempFilePathCache = tempFilePathCache;
         this.context = context;
-        this.isDownload = isDownload;
         this.dim = dim;
     }
 
     protected Bitmap doInBackground(String... urls) {
         Bitmap mIcon11 = null;
-        if(isDownload) {
+        if(!ImageFilePathsCache.hasImageFilePath(tempFileName)) {
             url = urls[0];
             try {
                 InputStream in = new java.net.URL(url).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
-                tempFilePathCache.add(saveImageToInternalStorage(mIcon11));
+                ImageFilePathsCache.addImageFilePath(saveImageToInternalStorage(mIcon11));
             } catch (Exception e) {
             }
         }else{
@@ -79,6 +75,7 @@ public class DownloadThumbNailTask extends AsyncTask<String, Void, Bitmap> {
             // Writing the bitmap to the output stream
             image.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
+            tempFilePath = tempFileName;
         } catch (Exception e) {
 
         }
